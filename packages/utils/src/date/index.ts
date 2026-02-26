@@ -1,7 +1,10 @@
 /**
  * 格式化日期为相对时间
  */
-export function formatRelativeTime(date: Date): string {
+export function formatRelativeTime(date: Date): string
+export function formatRelativeTime(timestamp: number): string
+export function formatRelativeTime(dateOrTimestamp: Date | number): string {
+  const date = typeof dateOrTimestamp === 'number' ? new Date(dateOrTimestamp) : dateOrTimestamp
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
   const diffSec = Math.floor(diffMs / 1000)

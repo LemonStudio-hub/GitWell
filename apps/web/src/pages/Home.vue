@@ -80,6 +80,58 @@
             支持 GitHub 和 GitLab 仓库 URL
           </p>
         </div>
+
+        <!-- Recent History -->
+        <div v-if="recentHistory.length > 0" class="mt-6 bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">最近访问</h3>
+            <router-link
+              to="/history"
+              class="text-sm text-primary-600 hover:text-primary-700"
+            >
+              查看全部
+            </router-link>
+          </div>
+          <div class="space-y-2">
+            <div
+              v-for="record in recentHistory"
+              :key="record.id"
+              class="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors cursor-pointer"
+              @click="selectHistory(record)"
+            >
+              <div class="flex items-center space-x-3">
+                <span
+                  class="text-xs px-2 py-1 rounded-full"
+                  :class="record.platform === 'github' ? 'bg-gray-800 text-white' : 'bg-orange-500 text-white'"
+                >
+                  {{ record.platform === 'github' ? 'GitHub' : 'GitLab' }}
+                </span>
+                <div>
+                  <div class="text-sm font-medium text-gray-900">
+                    {{ record.owner }} / {{ record.repo }}
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    {{ formatRelativeTime(record.timestamp) }}
+                  </div>
+                </div>
+              </div>
+              <button
+                @click.stop="removeHistory(record.id)"
+                class="text-gray-400 hover:text-red-600 transition-colors"
+                title="删除"
+              >
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -143,13 +195,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { isValidRepoUrl } from '@gitdash/utils'
+import { isValidRepoUrl, formatRelativeTime, getRecentHistory, addHistory, deleteHistory, type HistoryRecord } from '@gitdash/utils'
 
 const router = useRouter()
 const repoUrl = ref('')
 const errorMessage = ref('')
+const recentHistory = ref<HistoryRecord[]>([])
 
 const validateUrl = (url: string): boolean => {
   if (!url.trim()) {
@@ -166,8 +219,41 @@ const validateUrl = (url: string): boolean => {
   return true
 }
 
+const parseRepoUrl = (url: string) => {
+  const githubMatch = url.match(/^https?:\/\/(?:www\.)?github\.com\/([^\/]+)\/([^\/]+)(?:\/)?$/i)
+  if (githubMatch) {
+    return {
+      platform: 'github' as const,
+      owner: githubMatch[1]!,
+      repo: githubMatch[2]!.replace(/\.git$/, ''),
+    }
+  }
+
+  const gitlabMatch = url.match(/^https?:\/\/(?:www\.)?gitlab\.com\/([^\/]+)\/([^\/]+)(?:\/)?$/i)
+  if (gitlabMatch) {
+    return {
+      platform: 'gitlab' as const,
+      owner: gitlabMatch[1]!,
+      repo: gitlabMatch[2]!.replace(/\.git$/, ''),
+    }
+  }
+
+  return null
+}
+
 const analyzeRepo = () => {
   if (validateUrl(repoUrl.value)) {
+    const parsed = parseRepoUrl(repoUrl.value)
+    if (parsed) {
+      addHistory({
+        url: repoUrl.value,
+        platform: parsed.platform,
+        owner: parsed.owner,
+        repo: parsed.repo,
+      })
+      loadRecentHistory()
+    }
+
     router.push({
       name: 'Dashboard',
       query: { url: repoUrl.value },
@@ -175,9 +261,36 @@ const analyzeRepo = () => {
   }
 }
 
+const selectHistory = (record: HistoryRecord) => {
+  addHistory({
+    url: record.url,
+    platform: record.platform,
+    owner: record.owner,
+    repo: record.repo,
+  })
+  loadRecentHistory()
+  router.push({
+    name: 'Dashboard',
+    query: { url: record.url },
+  })
+}
+
+const removeHistory = (id: string) => {
+  deleteHistory(id)
+  loadRecentHistory()
+}
+
+const loadRecentHistory = () => {
+  recentHistory.value = getRecentHistory(5)
+}
+
 const clearError = () => {
   if (errorMessage.value) {
     errorMessage.value = ''
   }
 }
+
+onMounted(() => {
+  loadRecentHistory()
+})
 </script>

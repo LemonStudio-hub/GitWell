@@ -32,6 +32,13 @@
             >
               对比
             </router-link>
+            <router-link
+              to="/history"
+              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              active-class="bg-primary-50"
+            >
+              历史记录
+            </router-link>
           </nav>
         </div>
       </div>
