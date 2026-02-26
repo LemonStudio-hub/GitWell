@@ -45,12 +45,12 @@ export class GitHubClient extends PlatformClient {
       description: response.description ?? '',
       stars: response.stargazers_count,
       forks: response.forks_count,
-      watchers: response.subscribers_count,
+      watchers: response.watchers_count,
       language: response.language ?? 'Unknown',
       createdAt: new Date(response.created_at),
       updatedAt: new Date(response.updated_at),
-      openIssues: response.open_issues_count - response.open_pull_requests_count,
-      openPRs: response.open_pull_requests_count,
+      openIssues: 0,
+      openPRs: 0,
       url: response.html_url ?? response.url ?? `https://github.com/${fullName}`,
     }
   }

@@ -177,6 +177,10 @@ async function handleRepoRequest(
       client.fetchPRs(repoInfo),
     ])
 
+    // 更新 openIssues 和 openPRs 的数量
+    repoData.openIssues = issues.filter((issue) => issue.state === 'open').length
+    repoData.openPRs = prs.filter((pr) => pr.state === 'open').length
+
     // 分析数据
     const analyzer = new RepoAnalyzer()
     const { metrics, healthScore, trendData } = analyzer.analyzeRepo({

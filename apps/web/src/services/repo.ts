@@ -49,6 +49,10 @@ export class RepoService {
       client.fetchPRs(repoInfo),
     ])
 
+    // 更新 openIssues 和 openPRs 的数量
+    repoData.openIssues = issues.filter((issue) => issue.state === 'open').length
+    repoData.openPRs = prs.filter((pr) => pr.state === 'open').length
+
     // 分析数据
     const { metrics, healthScore, trendData } = this.analyzer.analyzeRepo({
       commits,
