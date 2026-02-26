@@ -39,9 +39,41 @@
 
     <!-- Dashboard Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900">项目仪表盘</h2>
-        <p class="text-gray-600 mt-1">查看项目健康指标和数据分析</p>
+      <div class="mb-6 flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">项目仪表盘</h2>
+          <p class="text-gray-600 mt-1">查看项目健康指标和数据分析</p>
+        </div>
+        <div v-if="repoData" class="flex gap-2">
+          <button
+            @click="exportData('json')"
+            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center gap-2"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l4-4m-4 4h4"
+              />
+            </svg>
+            导出 JSON
+          </button>
+          <button
+            @click="exportData('markdown')"
+            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center gap-2"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            导出报告
+          </button>
+        </div>
       </div>
 
       <!-- Loading State -->
@@ -183,7 +215,7 @@
         </div>
 
         <!-- Charts Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div class="bg-white rounded-lg shadow-md p-6">
             <h3 class="text-lg font-semibold mb-4">最近30天提交趋势</h3>
             <div class="h-64">
@@ -209,6 +241,44 @@
               />
               <div v-else class="h-full flex items-center justify-center text-gray-400">
                 暂无数据
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- More Charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-4">Top 10 贡献者</h3>
+            <div class="h-64">
+              <ContributorChart v-if="contributors.length > 0" :data="contributors" />
+              <div v-else class="h-full flex items-center justify-center text-gray-400">
+                暂无数据
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-4">Issue/PR 状态分布</h3>
+            <div class="h-64">
+              <IssuePRChart v-if="issues.length > 0 || prs.length > 0" :issues="issues" :prs="prs" />
+              <div v-else class="h-full flex items-center justify-center text-gray-400">
+                暂无数据
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Language Chart -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="repoData?.language">
+          <h3 class="text-lg font-semibold mb-4">代码语言分布</h3>
+          <div class="h-64 flex items-center justify-center">
+            <div class="flex items-center gap-8">
+              <div class="text-6xl font-bold text-primary-600">
+                {{ repoData.language }}
+              </div>
+              <div class="text-gray-600">
+                <p>主要开发语言</p>
+                <p class="text-sm mt-2">语言分析功能即将推出</p>
               </div>
             </div>
           </div>
@@ -240,11 +310,15 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { repoService } from '../services/repo'
 import { formatNumber, formatPercentage, formatDate } from '@gitwell/utils'
+import { exportAsJSON, exportAsMarkdown } from '@gitwell/utils'
 import MetricCard from '@gitwell/ui/MetricCard.vue'
 import HealthBadge from '@gitwell/ui/HealthBadge.vue'
 import LineChart from '../components/LineChart.vue'
 import PieChart from '../components/PieChart.vue'
-import type { RepoData, HealthMetrics, TrendData } from '@gitwell/api'
+import ContributorChart from '../components/ContributorChart.vue'
+import IssuePRChart from '../components/IssuePRChart.vue'
+import LanguageChart from '../components/LanguageChart.vue'
+import type { RepoData, HealthMetrics, TrendData, Contributor, Issue, PullRequest } from '@gitwell/api'
 
 const route = useRoute()
 
@@ -260,6 +334,9 @@ const metrics = ref<HealthMetrics>({
   responseTime: 0,
 })
 const trendData = ref<TrendData[]>([])
+const contributors = ref<Contributor[]>([])
+const issues = ref<Issue[]>([])
+const prs = ref<PullRequest[]>([])
 
 const healthScore = computed(() => {
   const m = metrics.value
@@ -293,6 +370,35 @@ const fetchData = async () => {
     repoData.value = data.repoData
     metrics.value = data.metrics
     trendData.value = data.trendData
+
+    // TODO: 从 repoService 获取完整数据
+    // 暂时使用模拟数据
+    contributors.value = [
+      { id: '1', login: 'contributor1', avatarUrl: '', contributions: 42 },
+      { id: '2', login: 'contributor2', avatarUrl: '', contributions: 35 },
+      { id: '3', login: 'contributor3', avatarUrl: '', contributions: 28 },
+      { id: '4', login: 'contributor4', avatarUrl: '', contributions: 21 },
+      { id: '5', login: 'contributor5', avatarUrl: '', contributions: 15 },
+      { id: '6', login: 'contributor6', avatarUrl: '', contributions: 12 },
+      { id: '7', login: 'contributor7', avatarUrl: '', contributions: 10 },
+      { id: '8', login: 'contributor8', avatarUrl: '', contributions: 8 },
+      { id: '9', login: 'contributor9', avatarUrl: '', contributions: 5 },
+      { id: '10', login: 'contributor10', avatarUrl: '', contributions: 3 },
+    ]
+
+    issues.value = [
+      { id: '1', title: 'Issue 1', number: 1, state: 'open', createdAt: new Date(), author: 'user1' },
+      { id: '2', title: 'Issue 2', number: 2, state: 'closed', createdAt: new Date(), closedAt: new Date(), author: 'user2' },
+      { id: '3', title: 'Issue 3', number: 3, state: 'open', createdAt: new Date(), author: 'user3' },
+      { id: '4', title: 'Issue 4', number: 4, state: 'closed', createdAt: new Date(), closedAt: new Date(), author: 'user4' },
+    ]
+
+    prs.value = [
+      { id: '1', title: 'PR 1', number: 1, state: 'merged', createdAt: new Date(), mergedAt: new Date(), author: 'user1', additions: 100, deletions: 50 },
+      { id: '2', title: 'PR 2', number: 2, state: 'open', createdAt: new Date(), author: 'user2', additions: 200, deletions: 30 },
+      { id: '3', title: 'PR 3', number: 3, state: 'closed', createdAt: new Date(), author: 'user3', additions: 50, deletions: 10 },
+      { id: '4', title: 'PR 4', number: 4, state: 'merged', createdAt: new Date(), mergedAt: new Date(), author: 'user4', additions: 150, deletions: 40 },
+    ]
   } catch (e) {
     error.value = e instanceof Error ? e.message : '获取仓库数据失败'
   } finally {
@@ -302,6 +408,24 @@ const fetchData = async () => {
 
 const retry = () => {
   fetchData()
+}
+
+const exportData = (format: 'json' | 'markdown') => {
+  if (!repoData.value) return
+
+  const data = {
+    repoData: repoData.value,
+    metrics: metrics.value,
+    healthScore: healthScore.value,
+  }
+
+  const filename = repoData.value.name.replace(/\//g, '-')
+
+  if (format === 'json') {
+    exportAsJSON(data, filename)
+  } else {
+    exportAsMarkdown(data, filename)
+  }
 }
 
 onMounted(() => {
