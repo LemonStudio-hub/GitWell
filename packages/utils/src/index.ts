@@ -6,3 +6,6 @@ export * from './format'
 
 // 导出验证工具
 export * from './validation'
+
+// 导出缓存工具
+export * from './cache'

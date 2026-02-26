@@ -51,7 +51,23 @@
 
       <!-- Error State -->
       <div v-else-if="error" class="bg-danger-50 border border-danger-200 rounded-lg p-6">
-        <p class="text-danger-800">{{ error }}</p>
+        <div class="flex items-center">
+          <svg class="h-6 w-6 text-danger-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p class="text-danger-800">{{ error }}</p>
+        </div>
+        <button
+          @click="retry"
+          class="mt-4 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 transition-colors"
+        >
+          重试
+        </button>
       </div>
 
       <!-- Dashboard Content -->
@@ -59,14 +75,28 @@
         <!-- Repository Info Card -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
           <div class="flex items-start justify-between">
-            <div>
-              <h3 class="text-xl font-bold text-gray-900">{{ repoData.name }}</h3>
-              <p class="text-gray-600 mt-1">{{ repoData.description }}</p>
-              <div class="flex items-center gap-4 mt-3">
-                <span class="text-sm text-gray-500">⭐ {{ repoData.stars }}</span>
-                <span class="text-sm text-gray-500">🍴 {{ repoData.forks }}</span>
-                <span class="text-sm text-gray-500">👀 {{ repoData.watchers }}</span>
-                <span class="text-sm text-gray-500">💻 {{ repoData.language }}</span>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <h3 class="text-xl font-bold text-gray-900">{{ repoData.name }}</h3>
+                <HealthBadge :score="healthScore" size="md" />
+              </div>
+              <p v-if="repoData.description" class="text-gray-600 mt-1">{{ repoData.description }}</p>
+              <div class="flex items-center gap-4 mt-3 flex-wrap">
+                <span class="text-sm text-gray-500 flex items-center gap-1">
+                  ⭐ {{ formatNumber(repoData.stars) }}
+                </span>
+                <span class="text-sm text-gray-500 flex items-center gap-1">
+                  🍴 {{ formatNumber(repoData.forks) }}
+                </span>
+                <span class="text-sm text-gray-500 flex items-center gap-1">
+                  👀 {{ formatNumber(repoData.watchers) }}
+                </span>
+                <span v-if="repoData.language" class="text-sm text-gray-500 flex items-center gap-1">
+                  💻 {{ repoData.language }}
+                </span>
+                <span class="text-sm text-gray-500 flex items-center gap-1">
+                  📅 创建于 {{ formatDate(repoData.createdAt, 'short') }}
+                </span>
               </div>
             </div>
             <div class="text-right">
@@ -74,7 +104,7 @@
                 :href="repoData.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-primary-600 hover:text-primary-700"
+                class="text-primary-600 hover:text-primary-700 font-medium"
               >
                 查看仓库 →
               </a>
@@ -83,47 +113,103 @@
         </div>
 
         <!-- Health Metrics -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-          <div class="bg-white rounded-lg shadow-md p-4">
-            <p class="text-sm text-gray-600 mb-1">总体健康度</p>
-            <p class="text-2xl font-bold" :class="getHealthColor(healthScore)">
-              {{ healthScore.toFixed(1) }}%
-            </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+          <MetricCard
+            title="总体健康度"
+            :value="healthScore"
+            type="success"
+            :trend="healthScore >= 80 ? '优秀' : healthScore >= 60 ? '良好' : '需改进'"
+          />
+          <MetricCard
+            title="每周提交数"
+            :value="metrics.commitFrequency"
+            type="default"
+            :trend="metrics.commitFrequency > 10 ? '活跃' : '一般'"
+          />
+          <MetricCard
+            title="贡献者活跃度"
+            :value="metrics.contributorCount"
+            type="default"
+          />
+          <MetricCard
+            title="代码质量"
+            :value="metrics.codeQuality"
+            type="success"
+            :trend="metrics.codeQuality >= 80 ? '高质量' : '中等'"
+          />
+          <MetricCard
+            title="问题解决率"
+            :value="metrics.issueResolutionRate * 100"
+            type="warning"
+          />
+        </div>
+
+        <!-- Detailed Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-4">Issue 指标</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">开放 Issues</span>
+                <span class="font-semibold">{{ repoData.openIssues }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">解决率</span>
+                <span class="font-semibold" :class="getQualityColor(metrics.issueResolutionRate * 100)">
+                  {{ formatPercentage(metrics.issueResolutionRate) }}
+                </span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">平均响应时间</span>
+                <span class="font-semibold">{{ formatNumber(metrics.responseTime) }} 小时</span>
+              </div>
+            </div>
           </div>
-          <div class="bg-white rounded-lg shadow-md p-4">
-            <p class="text-sm text-gray-600 mb-1">提交频率</p>
-            <p class="text-2xl font-bold text-primary-600">{{ healthMetrics.commitFrequency.toFixed(1) }}</p>
-          </div>
-          <div class="bg-white rounded-lg shadow-md p-4">
-            <p class="text-sm text-gray-600 mb-1">贡献者</p>
-            <p class="text-2xl font-bold text-primary-600">{{ healthMetrics.contributorCount }}</p>
-          </div>
-          <div class="bg-white rounded-lg shadow-md p-4">
-            <p class="text-sm text-gray-600 mb-1">代码质量</p>
-            <p class="text-2xl font-bold" :class="getQualityColor(healthMetrics.codeQuality)">
-              {{ healthMetrics.codeQuality.toFixed(1) }}%
-            </p>
-          </div>
-          <div class="bg-white rounded-lg shadow-md p-4">
-            <p class="text-sm text-gray-600 mb-1">问题解决率</p>
-            <p class="text-2xl font-bold" :class="getQualityColor(healthMetrics.issueResolutionRate * 100)">
-              {{ (healthMetrics.issueResolutionRate * 100).toFixed(1) }}%
-            </p>
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-4">Pull Request 指标</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">开放 PRs</span>
+                <span class="font-semibold">{{ repoData.openPRs }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">合并率</span>
+                <span class="font-semibold" :class="getQualityColor(metrics.prMergeRate * 100)">
+                  {{ formatPercentage(metrics.prMergeRate) }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Charts Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold mb-4">提交频率趋势</h3>
-            <div class="h-64 flex items-center justify-center text-gray-400">
-              图表组件待实现
+            <h3 class="text-lg font-semibold mb-4">最近30天提交趋势</h3>
+            <div class="h-64">
+              <LineChart v-if="trendData.length > 0" :data="trendData" title="提交趋势" />
+              <div v-else class="h-full flex items-center justify-center text-gray-400">
+                暂无数据
+              </div>
             </div>
           </div>
           <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold mb-4">贡献者活跃度</h3>
-            <div class="h-64 flex items-center justify-center text-gray-400">
-              图表组件待实现
+            <h3 class="text-lg font-semibold mb-4">健康度构成</h3>
+            <div class="h-64">
+              <PieChart
+                v-if="healthScore > 0"
+                :data="[
+                  { name: '提交频率', value: metrics.commitFrequency * 0.25 },
+                  { name: '贡献者', value: metrics.contributorCount * 0.2 },
+                  { name: '代码质量', value: metrics.codeQuality * 0.2 },
+                  { name: 'Issue 解决率', value: metrics.issueResolutionRate * 100 * 0.2 },
+                  { name: 'PR 合并率', value: metrics.prMergeRate * 100 * 0.15 },
+                ]"
+                title="健康度构成"
+              />
+              <div v-else class="h-full flex items-center justify-center text-gray-400">
+                暂无数据
+              </div>
             </div>
           </div>
         </div>
@@ -152,54 +238,39 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { repoService } from '../services/repo'
+import { formatNumber, formatPercentage, formatDate } from '@gitwell/utils'
+import MetricCard from '@gitwell/ui/MetricCard.vue'
+import HealthBadge from '@gitwell/ui/HealthBadge.vue'
+import LineChart from '../components/LineChart.vue'
+import PieChart from '../components/PieChart.vue'
+import type { RepoData, HealthMetrics, TrendData } from '@gitwell/api'
 
 const route = useRoute()
-
-interface RepoData {
-  name: string
-  description: string
-  stars: number
-  forks: number
-  watchers: number
-  language: string
-  url: string
-}
-
-interface HealthMetrics {
-  commitFrequency: number
-  contributorCount: number
-  codeQuality: number
-  issueResolutionRate: number
-  prMergeRate: number
-}
 
 const loading = ref(true)
 const error = ref('')
 const repoData = ref<RepoData | null>(null)
-const healthMetrics = ref<HealthMetrics>({
+const metrics = ref<HealthMetrics>({
   commitFrequency: 0,
   contributorCount: 0,
   codeQuality: 0,
   issueResolutionRate: 0,
   prMergeRate: 0,
+  responseTime: 0,
 })
+const trendData = ref<TrendData[]>([])
 
 const healthScore = computed(() => {
-  const metrics = healthMetrics.value
+  const m = metrics.value
   return (
-    metrics.commitFrequency * 0.25 +
-    metrics.contributorCount * 0.2 +
-    metrics.codeQuality * 0.2 +
-    metrics.issueResolutionRate * 100 * 0.2 +
-    metrics.prMergeRate * 100 * 0.15
+    m.commitFrequency * 0.25 +
+    m.contributorCount * 0.2 +
+    m.codeQuality * 0.2 +
+    m.issueResolutionRate * 100 * 0.2 +
+    m.prMergeRate * 100 * 0.15
   )
 })
-
-const getHealthColor = (score: number) => {
-  if (score >= 80) return 'text-success-600'
-  if (score >= 60) return 'text-warning-600'
-  return 'text-danger-600'
-}
 
 const getQualityColor = (score: number) => {
   if (score >= 80) return 'text-success-600'
@@ -207,7 +278,7 @@ const getQualityColor = (score: number) => {
   return 'text-danger-600'
 }
 
-onMounted(async () => {
+const fetchData = async () => {
   const url = route.query.url as string
   if (!url) {
     loading.value = false
@@ -215,29 +286,25 @@ onMounted(async () => {
   }
 
   try {
-    // TODO: 实现真实的 API 调用
-    // 模拟数据
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    repoData.value = {
-      name: 'example/repo',
-      description: 'Example repository description',
-      stars: 1234,
-      forks: 567,
-      watchers: 89,
-      language: 'TypeScript',
-      url: url,
-    }
-    healthMetrics.value = {
-      commitFrequency: 75.5,
-      contributorCount: 42,
-      codeQuality: 85.2,
-      issueResolutionRate: 0.78,
-      prMergeRate: 0.92,
-    }
+    loading.value = true
+    error.value = ''
+
+    const data = await repoService.getRepoData(url)
+    repoData.value = data.repoData
+    metrics.value = data.metrics
+    trendData.value = data.trendData
   } catch (e) {
-    error.value = '获取仓库数据失败，请检查 URL 是否正确'
+    error.value = e instanceof Error ? e.message : '获取仓库数据失败'
   } finally {
     loading.value = false
   }
+}
+
+const retry = () => {
+  fetchData()
+}
+
+onMounted(() => {
+  fetchData()
 })
 </script>
