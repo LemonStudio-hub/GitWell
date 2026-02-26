@@ -62,23 +62,50 @@ export class MemoryCache {
 
   /**
    * 检查缓存是否存在且未过期
-   */
-  has(key: string): boolean {
-    return this.get(key) !== null
-  }
-
-  /**
-   * 清理过期缓存
-   */
-  cleanup(): void {
-    const now = Date.now()
-    for (const [key, entry] of this.cache.entries()) {
-      if (now - entry.timestamp > entry.ttl) {
-        this.cache.delete(key)
-      }
+     */
+    has(key: string): boolean {
+      return this.get(key) !== null
     }
-  }
-}
+  
+    /**
+     * 获取缓存大小（仅计算未过期的条目）
+     */
+    size(): number {
+      let count = 0
+      const now = Date.now()
+      for (const entry of this.cache.values()) {
+        if (now - entry.timestamp <= entry.ttl) {
+          count++
+        }
+      }
+      return count
+    }
+  
+    /**
+     * 获取所有键（仅返回未过期的键）
+     */
+    keys(): string[] {
+      const keys: string[] = []
+      const now = Date.now()
+      for (const [key, entry] of this.cache.entries()) {
+        if (now - entry.timestamp <= entry.ttl) {
+          keys.push(key)
+        }
+      }
+      return keys
+    }
+  
+    /**
+     * 清理过期缓存
+     */
+    cleanup(): void {
+      const now = Date.now()
+      for (const [key, entry] of this.cache.entries()) {
+        if (now - entry.timestamp > entry.ttl) {
+          this.cache.delete(key)
+        }
+      }
+    }}
 
 /**
  * 单例缓存实例

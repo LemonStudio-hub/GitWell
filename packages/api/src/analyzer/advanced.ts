@@ -7,7 +7,7 @@ export class AdvancedAnalyzer {
   /**
    * 计算线性回归预测
    */
-  private calculateLinearRegression(data: { x: number; y: number }[]): { slope: number; intercept: number } {
+  public calculateLinearRegression(data: { x: number; y: number }[]): { slope: number; intercept: number } {
     const n = data.length
     if (n < 2) {
       return { slope: 0, intercept: 0 }
