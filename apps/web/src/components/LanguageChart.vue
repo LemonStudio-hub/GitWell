@@ -4,8 +4,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue'
-import * as echarts from 'echarts'
-import type { EChartsOption } from 'echarts'
+import * as echarts from 'echarts/core'
+import { PieChart } from 'echarts/charts'
+import { TitleComponent, TooltipComponent } from 'echarts/components'
+import type { EChartsCoreOption } from 'echarts/core'
 
 interface Props {
   data: { name: string; value: number; color?: string }[]
@@ -33,7 +35,7 @@ const updateChart = () => {
   const values = props.data.map((item) => item.value)
   const colors = props.data.map((item) => item.color || '#0ea5e9')
 
-  const option: EChartsOption = {
+  const option: EChartsCoreOption = {
     title: {
       text: props.title,
       left: 'center',

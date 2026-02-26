@@ -4,8 +4,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue'
-import * as echarts from 'echarts'
-import type { EChartsOption } from 'echarts'
+import * as echarts from 'echarts/core'
+import { PieChart } from 'echarts/charts'
+import { TitleComponent, TooltipComponent } from 'echarts/components'
+import type { EChartsCoreOption } from 'echarts/core'
 import type { Issue, PullRequest } from '@gitwell/api'
 
 interface Props {
@@ -38,7 +40,7 @@ const updateChart = () => {
   const prClosed = props.prs.filter((p) => p.state === 'closed').length
   const prMerged = props.prs.filter((p) => p.state === 'merged').length
 
-  const option: EChartsOption = {
+  const option: EChartsCoreOption = {
     title: {
       text: props.title,
       left: 'center',

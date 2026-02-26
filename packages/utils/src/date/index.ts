@@ -31,11 +31,10 @@ export function formatRelativeTime(date: Date): string {
  */
 export function formatDate(date: Date, format: 'short' | 'long' | 'full' = 'short'): string {
   const options: Intl.DateTimeFormatOptions = {
-    short: { year: 'numeric', month: 'numeric', day: 'numeric' },
-    long: { year: 'numeric', month: 'long', day: 'numeric' },
-    full: { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' },
+    short: { year: 'numeric' as const, month: 'numeric' as const, day: 'numeric' as const },
+    long: { year: 'numeric' as const, month: 'long' as const, day: 'numeric' as const },
+    full: { year: 'numeric' as const, month: 'long' as const, day: 'numeric' as const, hour: '2-digit' as const, minute: '2-digit' as const, second: '2-digit' as const },
   }[format]
-
   return date.toLocaleDateString('zh-CN', options)
 }
 

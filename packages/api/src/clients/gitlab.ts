@@ -23,8 +23,8 @@ export class GitLabClient extends PlatformClient {
     if (match) {
       return {
         platform: 'gitlab',
-        owner: match[1],
-        repo: match[2].replace(/\.git$/, ''),
+        owner: match[1]!,
+        repo: match[2]!.replace(/\.git$/, ''),
         url: url,
       }
     }
@@ -37,18 +37,20 @@ export class GitLabClient extends PlatformClient {
    */
   async fetchRepoInfo(repo: RepoInfo): Promise<RepoData> {
     const response = await this.request(`/projects/${encodeURIComponent(`${repo.owner}/${repo.repo}`)}`)
+    const pathWithNamespace = response.path_with_namespace ?? `${repo.owner}/${repo.repo}`
     return {
       id: response.id.toString(),
-      name: response.path_with_namespace,
-      description: response.description || '',
+      name: pathWithNamespace,
+      description: response.description ?? '',
       stars: response.star_count,
       forks: response.forks_count,
       watchers: response.star_count, // GitLab uses star_count for watchers
-      language: response.languages ? Object.keys(response.languages)[0] : 'Unknown',
+      language: response.languages ? Object.keys(response.languages)[0] ?? 'Unknown' : 'Unknown',
       createdAt: new Date(response.created_at),
       updatedAt: new Date(response.last_activity_at),
       openIssues: response.open_issues_count,
       openPRs: 0, // GitLab counts MRs separately
+      url: response.web_url ?? `https://gitlab.com/${pathWithNamespace}`,
     }
   }
 
@@ -61,8 +63,8 @@ export class GitLabClient extends PlatformClient {
     )
     return response.map((contributor: any) => ({
       id: contributor.id.toString(),
-      login: contributor.name || contributor.email,
-      avatarUrl: contributor.avatar_url || '',
+      login: (contributor.name ?? contributor.email) ?? 'Unknown',
+      avatarUrl: contributor.avatar_url ?? '',
       contributions: contributor.commits,
     }))
   }

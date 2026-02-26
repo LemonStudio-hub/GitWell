@@ -13,7 +13,7 @@ export interface ApiResponse<T> {
  * API 服务
  */
 class ApiService {
-  private baseUrl = import.meta.env.VITE_API_URL || '/api'
+  private baseUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '')
 
   /**
    * 发送请求

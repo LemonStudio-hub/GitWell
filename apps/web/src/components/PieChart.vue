@@ -4,8 +4,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue'
-import * as echarts from 'echarts'
-import type { EChartsOption } from 'echarts'
+import * as echarts from 'echarts/core'
+import { PieChart } from 'echarts/charts'
+import { TitleComponent, TooltipComponent } from 'echarts/components'
+import type { EChartsCoreOption } from 'echarts/core'
 
 interface Props {
   data: { name: string; value: number }[]
@@ -29,7 +31,7 @@ const initChart = () => {
 const updateChart = () => {
   if (!chart || !props.data.length) return
 
-  const option: EChartsOption = {
+  const option: EChartsCoreOption = {
     title: {
       text: props.title,
       left: 'center',
@@ -96,6 +98,7 @@ watch(
 )
 
 onMounted(() => {
+  echarts.use([PieChart, TitleComponent, TooltipComponent])
   initChart()
   window.addEventListener('resize', handleResize)
 })

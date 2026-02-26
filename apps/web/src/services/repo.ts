@@ -20,7 +20,12 @@ export class RepoService {
     // 检查缓存
     const cacheKey = `repo:${url}`
     if (useCache) {
-      const cached = cache.get(cacheKey)
+      const cached = cache.get<{
+        repoData: RepoData
+        metrics: HealthMetrics
+        healthScore: number
+        trendData: TrendData[]
+      }>(cacheKey)
       if (cached) {
         return cached
       }

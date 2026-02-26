@@ -23,6 +23,7 @@ export interface RepoData {
   updatedAt: Date
   openIssues: number
   openPRs: number
+  url: string
 }
 
 /**

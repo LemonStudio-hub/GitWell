@@ -4,8 +4,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue'
-import * as echarts from 'echarts'
-import type { EChartsOption } from 'echarts'
+import * as echarts from 'echarts/core'
+import { LineChart } from 'echarts/charts'
+import { TitleComponent, TooltipComponent, GridComponent } from 'echarts/components'
+import type { EChartsCoreOption } from 'echarts/core'
 import type { TrendData } from '@gitwell/api'
 
 interface Props {
@@ -36,7 +38,7 @@ const updateChart = () => {
   })
   const values = props.data.map((item) => item.value)
 
-  const option: EChartsOption = {
+  const option: EChartsCoreOption = {
     title: {
       text: props.title,
       left: 'center',
@@ -127,6 +129,7 @@ watch(
 )
 
 onMounted(() => {
+  echarts.use([LineChart, TitleComponent, TooltipComponent, GridComponent])
   initChart()
   window.addEventListener('resize', handleResize)
 })

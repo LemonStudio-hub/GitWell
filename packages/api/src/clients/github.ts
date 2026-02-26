@@ -24,8 +24,8 @@ export class GitHubClient extends PlatformClient {
     if (match) {
       return {
         platform: 'github',
-        owner: match[1],
-        repo: match[2].replace(/\.git$/, ''),
+        owner: match[1]!,
+        repo: match[2]!.replace(/\.git$/, ''),
         url: url,
       }
     }
@@ -38,18 +38,20 @@ export class GitHubClient extends PlatformClient {
    */
   async fetchRepoInfo(repo: RepoInfo): Promise<RepoData> {
     const response = await this.request(`/repos/${repo.owner}/${repo.repo}`)
+    const fullName = response.full_name ?? `${repo.owner}/${repo.repo}`
     return {
       id: response.id.toString(),
-      name: response.full_name,
-      description: response.description || '',
+      name: fullName,
+      description: response.description ?? '',
       stars: response.stargazers_count,
       forks: response.forks_count,
       watchers: response.subscribers_count,
-      language: response.language || 'Unknown',
+      language: response.language ?? 'Unknown',
       createdAt: new Date(response.created_at),
       updatedAt: new Date(response.updated_at),
       openIssues: response.open_issues_count - response.open_pull_requests_count,
       openPRs: response.open_pull_requests_count,
+      url: response.html_url ?? response.url ?? `https://github.com/${fullName}`,
     }
   }
 
