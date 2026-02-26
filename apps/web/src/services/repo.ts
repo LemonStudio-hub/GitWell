@@ -1,5 +1,5 @@
 import { PlatformFactory, RepoAnalyzer } from '@gitdash/api'
-import type { RepoData, HealthMetrics, TrendData } from '@gitdash/api'
+import type { RepoData, HealthMetrics, TrendData, Contributor, Issue, PullRequest } from '@gitdash/api'
 import { cache } from '@gitdash/utils'
 
 /**
@@ -16,6 +16,9 @@ export class RepoService {
     metrics: HealthMetrics
     healthScore: number
     trendData: TrendData[]
+    contributors: Contributor[]
+    issues: Issue[]
+    prs: PullRequest[]
   }> {
     // 检查缓存
     const cacheKey = `repo:${url}`
@@ -25,6 +28,9 @@ export class RepoService {
         metrics: HealthMetrics
         healthScore: number
         trendData: TrendData[]
+        contributors: Contributor[]
+        issues: Issue[]
+        prs: PullRequest[]
       }>(cacheKey)
       if (cached) {
         return cached
@@ -69,6 +75,9 @@ export class RepoService {
       metrics,
       healthScore,
       trendData,
+      contributors,
+      issues,
+      prs,
     }
 
     // 缓存结果（5分钟）

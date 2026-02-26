@@ -373,35 +373,9 @@ const fetchData = async () => {
     repoData.value = data.repoData
     metrics.value = data.metrics
     trendData.value = data.trendData
-
-    // TODO: 从 repoService 获取完整数据
-    // 暂时使用模拟数据
-    contributors.value = [
-      { id: '1', login: 'contributor1', avatarUrl: '', contributions: 42 },
-      { id: '2', login: 'contributor2', avatarUrl: '', contributions: 35 },
-      { id: '3', login: 'contributor3', avatarUrl: '', contributions: 28 },
-      { id: '4', login: 'contributor4', avatarUrl: '', contributions: 21 },
-      { id: '5', login: 'contributor5', avatarUrl: '', contributions: 15 },
-      { id: '6', login: 'contributor6', avatarUrl: '', contributions: 12 },
-      { id: '7', login: 'contributor7', avatarUrl: '', contributions: 10 },
-      { id: '8', login: 'contributor8', avatarUrl: '', contributions: 8 },
-      { id: '9', login: 'contributor9', avatarUrl: '', contributions: 5 },
-      { id: '10', login: 'contributor10', avatarUrl: '', contributions: 3 },
-    ]
-
-    issues.value = [
-      { id: '1', title: 'Issue 1', number: 1, state: 'open', createdAt: new Date(), author: 'user1' },
-      { id: '2', title: 'Issue 2', number: 2, state: 'closed', createdAt: new Date(), closedAt: new Date(), author: 'user2' },
-      { id: '3', title: 'Issue 3', number: 3, state: 'open', createdAt: new Date(), author: 'user3' },
-      { id: '4', title: 'Issue 4', number: 4, state: 'closed', createdAt: new Date(), closedAt: new Date(), author: 'user4' },
-    ]
-
-    prs.value = [
-      { id: '1', title: 'PR 1', number: 1, state: 'merged', createdAt: new Date(), mergedAt: new Date(), author: 'user1', additions: 100, deletions: 50 },
-      { id: '2', title: 'PR 2', number: 2, state: 'open', createdAt: new Date(), author: 'user2', additions: 200, deletions: 30 },
-      { id: '3', title: 'PR 3', number: 3, state: 'closed', createdAt: new Date(), author: 'user3', additions: 50, deletions: 10 },
-      { id: '4', title: 'PR 4', number: 4, state: 'merged', createdAt: new Date(), mergedAt: new Date(), author: 'user4', additions: 150, deletions: 40 },
-    ]
+    contributors.value = data.contributors
+    issues.value = data.issues
+    prs.value = data.prs
   } catch (e) {
     error.value = e instanceof Error ? e.message : '获取仓库数据失败'
   } finally {
