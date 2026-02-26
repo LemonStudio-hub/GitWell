@@ -3,12 +3,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted } from 'vue'
+import { ref, onMounted, watch, onUnmounted, nextTick } from 'vue'
 import * as echarts from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { TitleComponent, TooltipComponent } from 'echarts/components'
 import type { EChartsCoreOption } from 'echarts/core'
 import type { Issue, PullRequest } from '@gitdash/api'
+
+// 在模块顶层注册 ECharts 组件
+echarts.use([PieChart, TitleComponent, TooltipComponent])
 
 interface Props {
   issues: Issue[]
@@ -26,8 +29,12 @@ let chart: echarts.ECharts | null = null
 const initChart = () => {
   if (!chartRef.value) return
 
-  chart = echarts.init(chartRef.value)
-  updateChart()
+  try {
+    chart = echarts.init(chartRef.value)
+    updateChart()
+  } catch (error) {
+    console.error('Failed to initialize chart:', error)
+  }
 }
 
 const updateChart = () => {
@@ -131,7 +138,9 @@ const updateChart = () => {
 }
 
 const handleResize = () => {
-  chart?.resize()
+  if (chart) {
+    chart.resize()
+  }
 }
 
 watch(
@@ -143,12 +152,18 @@ watch(
 )
 
 onMounted(() => {
-  initChart()
-  window.addEventListener('resize', handleResize)
+  // 使用 nextTick 确保 DOM 已经渲染
+  nextTick(() => {
+    initChart()
+    window.addEventListener('resize', handleResize)
+  })
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
-  chart?.dispose()
+  if (chart) {
+    chart.dispose()
+    chart = null
+  }
 })
 </script>
