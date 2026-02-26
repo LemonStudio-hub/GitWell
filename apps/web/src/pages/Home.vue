@@ -61,8 +61,10 @@
               v-model="repoUrl"
               type="text"
               placeholder="https://github.com/owner/repo"
-              class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              :class="errorMessage ? 'border-red-500' : 'border-gray-300'"
               @keyup.enter="analyzeRepo"
+              @input="clearError"
             />
             <button
               @click="analyzeRepo"
@@ -71,7 +73,10 @@
               分析
             </button>
           </div>
-          <p class="mt-3 text-sm text-gray-600">
+          <p v-if="errorMessage" class="mt-3 text-sm text-red-600">
+            {{ errorMessage }}
+          </p>
+          <p v-else class="mt-3 text-sm text-gray-600">
             支持 GitHub 和 GitLab 仓库 URL
           </p>
         </div>
@@ -140,16 +145,39 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { isValidRepoUrl } from '@gitdash/utils'
 
 const router = useRouter()
 const repoUrl = ref('')
+const errorMessage = ref('')
+
+const validateUrl = (url: string): boolean => {
+  if (!url.trim()) {
+    errorMessage.value = '请输入仓库 URL'
+    return false
+  }
+
+  if (!isValidRepoUrl(url)) {
+    errorMessage.value = 'URL 格式不正确，请输入有效的 GitHub 或 GitLab 仓库 URL（例如：https://github.com/owner/repo）'
+    return false
+  }
+
+  errorMessage.value = ''
+  return true
+}
 
 const analyzeRepo = () => {
-  if (repoUrl.value.trim()) {
+  if (validateUrl(repoUrl.value)) {
     router.push({
       name: 'Dashboard',
       query: { url: repoUrl.value },
     })
+  }
+}
+
+const clearError = () => {
+  if (errorMessage.value) {
+    errorMessage.value = ''
   }
 }
 </script>

@@ -53,7 +53,9 @@
               v-model="repo.url"
               type="text"
               :placeholder="`仓库 ${index + 1} URL`"
-              class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              :class="getErrorClass(index)"
+              @input="clearError(index)"
             />
             <button
               v-if="repos.length > 2"
@@ -63,6 +65,9 @@
               删除
             </button>
           </div>
+          <p v-for="(error, index) in errors" :key="index" class="text-sm text-red-600">
+            {{ error }}
+          </p>
         </div>
         <button
           v-if="repos.length < 4"
@@ -167,6 +172,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { isValidRepoUrl } from '@gitdash/utils'
 
 interface Repo {
   url: string
@@ -187,6 +193,7 @@ const repos = ref<Repo[]>([
 ])
 
 const comparisonResults = ref<ComparisonResult[]>([])
+const errors = ref<string[]>([])
 
 const addRepo = () => {
   if (repos.value.length < 4) {
@@ -196,9 +203,33 @@ const addRepo = () => {
 
 const removeRepo = (index: number) => {
   repos.value.splice(index, 1)
+  errors.value.splice(index, 1)
+}
+
+const validateUrls = (): boolean => {
+  errors.value = []
+  let hasError = false
+
+  repos.value.forEach((repo, index) => {
+    if (!repo.url.trim()) {
+      errors.value[index] = `仓库 ${index + 1} URL 不能为空`
+      hasError = true
+    } else if (!isValidRepoUrl(repo.url)) {
+      errors.value[index] = `仓库 ${index + 1} URL 格式不正确，请输入有效的 GitHub 或 GitLab 仓库 URL`
+      hasError = true
+    } else {
+      errors.value[index] = ''
+    }
+  })
+
+  return !hasError
 }
 
 const compareRepos = async () => {
+  if (!validateUrls()) {
+    return
+  }
+
   // TODO: 实现真实的对比逻辑
   // 模拟数据
   comparisonResults.value = [
@@ -231,5 +262,15 @@ const getQualityColor = (score: number) => {
   if (score >= 80) return 'text-success-600'
   if (score >= 60) return 'text-warning-600'
   return 'text-danger-600'
+}
+
+const getErrorClass = (index: number) => {
+  return errors.value[index] ? 'border-red-500' : 'border-gray-300'
+}
+
+const clearError = (index: number) => {
+  if (errors.value[index]) {
+    errors.value[index] = ''
+  }
 }
 </script>
