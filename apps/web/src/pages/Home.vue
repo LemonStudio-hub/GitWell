@@ -12,7 +12,7 @@
                 />
               </svg>
             </div>
-            <h1 class="ml-3 text-2xl font-bold text-gray-900">GitWell</h1>
+            <h1 class="ml-3 text-2xl font-bold text-gray-900">GitDash</h1>
           </div>
           <nav class="flex space-x-8">
             <router-link

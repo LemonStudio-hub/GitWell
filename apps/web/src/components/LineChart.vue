@@ -8,7 +8,7 @@ import * as echarts from 'echarts/core'
 import { LineChart } from 'echarts/charts'
 import { TitleComponent, TooltipComponent, GridComponent } from 'echarts/components'
 import type { EChartsCoreOption } from 'echarts/core'
-import type { TrendData } from '@gitwell/api'
+import type { TrendData } from '@gitdash/api'
 
 interface Props {
   data: TrendData[]

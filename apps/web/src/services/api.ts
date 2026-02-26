@@ -1,4 +1,4 @@
-import type { RepoData, Commit, Contributor, Issue, PullRequest, HealthMetrics, TrendData } from '@gitwell/api'
+import type { RepoData, Commit, Contributor, Issue, PullRequest, HealthMetrics, TrendData } from '@gitdash/api'
 
 /**
  * API 响应接口

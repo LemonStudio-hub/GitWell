@@ -15,7 +15,7 @@ declare module '*.vue' {
   export default component
 }
 
-declare module '@gitwell/ui/*' {
+declare module '@gitdash/ui/*' {
   import type { DefineComponent } from 'vue'
   const component: DefineComponent<{}, {}, any>
   export default component

@@ -1,7 +1,7 @@
 @echo off
-REM GitWell 开发环境启动脚本 (Windows)
+REM GitDash 开发环境启动脚本 (Windows)
 
-echo 🚀 启动 GitWell 开发环境...
+echo 🚀 启动 GitDash 开发环境...
 
 REM 检查 Node.js 版本
 for /f "tokens=*" %%i in ('node -v') do set NODE_VERSION=%%i
@@ -22,7 +22,7 @@ call pnpm install
 REM 启动前端开发服务器
 echo 🌐 启动前端开发服务器...
 cd apps/web
-start "GitWell Frontend" pnpm dev
+start "GitDash Frontend" pnpm dev
 
 REM 等待前端启动
 timeout /t 3 /nobreak >nul
@@ -35,7 +35,7 @@ cd ..\..
 if exist "workers\api\.env.local" (
     echo 🔧 启动 API 服务器...
     cd workers\api
-    start "GitWell API" pnpm dev
+    start "GitDash API" pnpm dev
 
     REM 等待 API 启动
     timeout /t 3 /nobreak >nul

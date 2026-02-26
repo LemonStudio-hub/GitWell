@@ -1,5 +1,5 @@
 /**
- * GitWell Cron Worker
+ * GitDash Cron Worker
  * 定时任务：更新缓存的数据
  */
 

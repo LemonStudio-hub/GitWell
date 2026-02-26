@@ -1,4 +1,4 @@
-import { PlatformFactory, RepoAnalyzer } from '@gitwell/api'
+import { PlatformFactory, RepoAnalyzer } from '@gitdash/api'
 import { handleWebSocketUpgrade } from './websocket'
 import {
   handleSubscribeRequest,

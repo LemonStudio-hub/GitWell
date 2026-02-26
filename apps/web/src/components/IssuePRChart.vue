@@ -8,7 +8,7 @@ import * as echarts from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { TitleComponent, TooltipComponent } from 'echarts/components'
 import type { EChartsCoreOption } from 'echarts/core'
-import type { Issue, PullRequest } from '@gitwell/api'
+import type { Issue, PullRequest } from '@gitdash/api'
 
 interface Props {
   issues: Issue[]

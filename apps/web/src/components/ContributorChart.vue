@@ -8,7 +8,7 @@ import * as echarts from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { TitleComponent, TooltipComponent, GridComponent } from 'echarts/components'
 import type { EChartsCoreOption } from 'echarts/core'
-import type { Contributor } from '@gitwell/api'
+import type { Contributor } from '@gitdash/api'
 
 interface Props {
   data: Contributor[]

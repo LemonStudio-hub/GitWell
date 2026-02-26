@@ -1,6 +1,6 @@
 # 环境变量配置
 
-本文档说明了 GitWell 项目所需的所有环境变量配置。
+本文档说明了 GitDash 项目所需的所有环境变量配置。
 
 ## 前端环境变量 (apps/web)
 
@@ -85,7 +85,7 @@ GITLAB_TOKEN=glpat-xxxxxxxxxxxxxxxxxxxx
 更新 `workers/api/wrangler.toml` 中的配置：
 
 ```toml
-name = "gitwell-api"
+name = "gitdash-api"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 
@@ -98,7 +98,7 @@ preview_id = "your_preview_kv_namespace_id"
 # D1 数据库
 [[d1_databases]]
 binding = "D1"
-database_name = "gitwell_db"
+database_name = "gitdash_db"
 database_id = "your_d1_database_id"
 
 # Cron Triggers - 每 10 分钟执行一次定期更新
@@ -106,7 +106,7 @@ database_id = "your_d1_database_id"
 crons = ["*/10 * * * *"]
 
 [env.production]
-routes = [{ pattern = "api.gitwell.dev/*", zone_name = "gitwell.dev" }]
+routes = [{ pattern = "api.gitdash.dev/*", zone_name = "gitdash.dev" }]
 ```
 
 ---
@@ -117,15 +117,15 @@ routes = [{ pattern = "api.gitwell.dev/*", zone_name = "gitwell.dev" }]
 
 ```bash
 # 创建数据库
-wrangler d1 create gitwell_db
+wrangler d1 create gitdash_db
 
 # 获取数据库 ID 并更新 wrangler.toml
 
 # 运行迁移
-wrangler d1 execute gitwell_db --local --file=./migrations/0001_initial.sql
+wrangler d1 execute gitdash_db --local --file=./migrations/0001_initial.sql
 
 # 生产环境迁移
-wrangler d1 execute gitwell_db --file=./migrations/0001_initial.sql
+wrangler d1 execute gitdash_db --file=./migrations/0001_initial.sql
 ```
 
 ---

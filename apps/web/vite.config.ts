@@ -8,9 +8,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@gitwell/api': path.resolve(__dirname, '../../packages/api/src'),
-      '@gitwell/ui': path.resolve(__dirname, '../../packages/ui/src'),
-      '@gitwell/utils': path.resolve(__dirname, '../../packages/utils/src'),
+      '@gitdash/api': path.resolve(__dirname, '../../packages/api/src'),
+      '@gitdash/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      '@gitdash/utils': path.resolve(__dirname, '../../packages/utils/src'),
     },
   },
   server: {

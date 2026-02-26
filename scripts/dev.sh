@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# GitWell 开发环境启动脚本
+# GitDash 开发环境启动脚本
 
 set -e
 
-echo "🚀 启动 GitWell 开发环境..."
+echo "🚀 启动 GitDash 开发环境..."
 
 # 检查 Node.js 版本
 NODE_VERSION=$(node -v)

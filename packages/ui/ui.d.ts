@@ -1,7 +1,7 @@
 /* eslint-disable */
 /* prettier-ignore */
 // @ts-nocheck
-declare module '@gitwell/ui' {
+declare module '@gitdash/ui' {
   import { DefineComponent } from 'vue'
   const MetricCard: DefineComponent
   const HealthBadge: DefineComponent

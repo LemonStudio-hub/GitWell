@@ -37,7 +37,7 @@ export async function handleWebSocketUpgrade(
   // 发送欢迎消息
   server.send(JSON.stringify({
     type: 'connected',
-    message: 'Connected to GitWell real-time updates',
+    message: 'Connected to GitDash real-time updates',
     repo: repoUrl,
   }))
 
@@ -135,7 +135,7 @@ export async function broadcastToClients(
  */
 export async function startPeriodicUpdates(env: Env, repoUrl: string): Promise<void> {
   // 这个函数应该由 Cloudflare Workers Cron Trigger 调用
-  const { PlatformFactory, RepoAnalyzer } = await import('@gitwell/api')
+  const { PlatformFactory, RepoAnalyzer } = await import('@gitdash/api')
 
   try {
     // 获取平台客户端

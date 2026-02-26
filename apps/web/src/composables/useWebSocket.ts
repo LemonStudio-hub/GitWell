@@ -1,5 +1,5 @@
 import { ref, onUnmounted } from 'vue'
-import type { RepoData, HealthMetrics } from '@gitwell/api'
+import type { RepoData, HealthMetrics } from '@gitdash/api'
 
 export interface WebSocketMessage {
   type: 'connected' | 'subscribed' | 'update' | 'error'

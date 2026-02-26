@@ -82,7 +82,7 @@ ${getHealthAssessment(healthScore)}
 ---
 
 *报告生成时间: ${new Date().toLocaleString('zh-CN')}*
-*生成工具: GitWell*
+*生成工具: GitDash*
 `
 
   const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' })

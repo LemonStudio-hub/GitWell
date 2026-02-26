@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# GitWell 测试脚本
+# GitDash 测试脚本
 
 set -e
 
-echo "🧪 运行 GitWell 测试..."
+echo "🧪 运行 GitDash 测试..."
 
 # 检查 Node.js 版本
 NODE_VERSION=$(node -v)
@@ -57,4 +57,4 @@ echo "   ✓ Utils 包单元测试"
 echo "   ✓ Workers 集成测试"
 echo "   ✓ 前端构建测试"
 echo ""
-echo "🎉 GitWell 项目已准备就绪！"
+echo "🎉 GitDash 项目已准备就绪！"

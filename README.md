@@ -1,10 +1,10 @@
-# GitWell
+# GitDash
 
 开源项目健康仪表盘 - 实时监控和分析 GitHub/GitLab 仓库的健康状态。
 
 ## 📋 项目简介
 
-GitWell 是一个功能强大的开源项目健康仪表盘，帮助开发者和项目管理者：
+GitDash 是一个功能强大的开源项目健康仪表盘，帮助开发者和项目管理者：
 
 - 📊 实时监控项目健康指标
 - 📈 可视化项目数据趋势
@@ -36,7 +36,7 @@ pnpm dev
 ## 🏗️ 项目结构
 
 ```
-gitwell/
+gitdash/
 ├── apps/                    # 前端应用
 │   └── web/                # Web 应用
 ├── packages/               # 共享包
@@ -90,10 +90,10 @@ gitwell/
 
 ```bash
 # 添加依赖到 web 应用
-pnpm --filter @gitwell/web add <package>
+pnpm --filter @gitdash/web add <package>
 
 # 添加依赖到 ui 包
-pnpm --filter @gitwell/ui add <package>
+pnpm --filter @gitdash/ui add <package>
 
 # 添加共享依赖
 pnpm add <package> -w
@@ -106,7 +106,7 @@ pnpm add <package> -w
 pnpm test
 
 # 运行特定包的测试
-pnpm --filter @gitwell/api test
+pnpm --filter @gitdash/api test
 ```
 
 ## 📄 许可证
@@ -119,5 +119,5 @@ MIT License
 
 ## 📮 联系方式
 
-- GitHub: [GitWell](https://github.com/yourusername/gitwell)
+- GitHub: [GitDash](https://github.com/yourusername/gitdash)
 - Email: your.email@example.com

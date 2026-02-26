@@ -1,4 +1,4 @@
-name = "gitwell-api"
+name = "gitdash-api"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 
@@ -11,7 +11,7 @@ preview_id = "your_preview_kv_namespace_id"
 # D1 数据库
 [[d1_databases]]
 binding = "D1"
-database_name = "gitwell_db"
+database_name = "gitdash_db"
 database_id = "your_d1_database_id"
 
 # Cron Triggers - 每 10 分钟执行一次定期更新
@@ -19,4 +19,4 @@ database_id = "your_d1_database_id"
 crons = ["*/10 * * * *"]
 
 [env.production]
-routes = [{ pattern = "api.gitwell.dev/*", zone_name = "gitwell.dev" }]
+routes = [{ pattern = "api.gitdash.dev/*", zone_name = "gitdash.dev" }]

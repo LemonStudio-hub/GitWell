@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatNumber } from '@gitwell/utils'
+import { formatNumber } from '@gitdash/utils'
 
 interface Props {
   name: string

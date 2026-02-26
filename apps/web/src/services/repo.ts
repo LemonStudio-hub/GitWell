@@ -1,6 +1,6 @@
-import { PlatformFactory, RepoAnalyzer } from '@gitwell/api'
-import type { RepoData, Commit, Contributor, Issue, PullRequest, HealthMetrics, TrendData } from '@gitwell/api'
-import { cache } from '@gitwell/utils'
+import { PlatformFactory, RepoAnalyzer } from '@gitdash/api'
+import type { RepoData, Commit, Contributor, Issue, PullRequest, HealthMetrics, TrendData } from '@gitdash/api'
+import { cache } from '@gitdash/utils'
 
 /**
  * 仓库服务

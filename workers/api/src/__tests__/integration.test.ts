@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { PlatformFactory } from '@gitwell/api'
+import { PlatformFactory } from '@gitdash/api'
 
 describe('Cloudflare Workers Integration', () => {
   describe('PlatformFactory', () => {

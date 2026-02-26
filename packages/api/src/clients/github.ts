@@ -133,7 +133,7 @@ export class GitHubClient extends PlatformClient {
   private async request(endpoint: string): Promise<any> {
     const headers: Record<string, string> = {
       'Accept': 'application/vnd.github.v3+json',
-      'User-Agent': 'GitWell',
+      'User-Agent': 'GitDash',
     }
 
     if (this.token) {
