@@ -1,0 +1,6 @@
+name = "gitwell-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[env.production]
+routes = [{ pattern = "api.gitwell.dev/*", zone_name = "gitwell.dev" }

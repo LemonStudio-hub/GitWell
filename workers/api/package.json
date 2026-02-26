@@ -1,0 +1,1 @@
+{"name": "@gitwell/worker-api", "version": "0.1.0", "type": "module", "scripts": {"dev": "wrangler dev", "deploy": "wrangler deploy", "test": "vitest"}, "dependencies": {"@gitwell/api": "workspace:*"}, "devDependencies": {"@cloudflare/vitest-pool-workers": "^0.5.29", "@types/node": "^24.10.1", "typescript": "~5.9.3", "vitest": "^2.1.8", "wrangler": "^3.94.0"}}

@@ -1,0 +1,1 @@
+{"name": "@gitwell/worker-cron", "version": "0.1.0", "type": "module", "scripts": {"dev": "wrangler dev", "deploy": "wrangler deploy"}, "dependencies": {"@gitwell/api": "workspace:*"}, "devDependencies": {"@types/node": "^24.10.1", "typescript": "~5.9.3", "wrangler": "^3.94.0"}}
