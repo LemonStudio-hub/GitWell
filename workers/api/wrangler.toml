@@ -5,8 +5,8 @@ compatibility_date = "2024-01-01"
 # KV 命名空间
 [[kv_namespaces]]
 binding = "KV"
-id = "your_kv_namespace_id"
-preview_id = "your_preview_kv_namespace_id"
+id = "6ef87686ff6c418c84704b44a50ce406"
+preview_id = "6c022f01236e4adea14a97f47970df45"
 
 # D1 数据库
 [[d1_databases]]
