@@ -18,11 +18,11 @@ import {
 } from './routes/dashboard'
 import type { Env } from './types'
 
-export interface Env {
-  GITHUB_TOKEN?: string
-  GITLAB_TOKEN?: string
-  KV?: KVNamespace
-  D1?: D1Database
+// Cloudflare Workers ScheduledEvent 接口
+interface ScheduledEvent {
+  scheduledTime: number
+  cron: string
+  waitUntil(promise: Promise<any>): void
 }
 
 export default {
@@ -45,7 +45,7 @@ export default {
     try {
       // WebSocket 升级请求
       if (path === '/api/ws' && request.headers.get('Upgrade') === 'websocket') {
-        return handleWebSocketUpgrade(request, env, corsHeaders)
+        return handleWebSocketUpgrade(request, corsHeaders)
       }
 
       // API routes
@@ -111,7 +111,7 @@ export default {
   },
 
   // 处理定时任务（Cron Triggers）
-  async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
+  async scheduled(_event: ScheduledEvent, env: Env): Promise<void> {
     const { startPeriodicUpdates } = await import('./websocket')
 
     // 从数据库获取需要定期更新的仓库列表
@@ -161,6 +161,10 @@ async function handleRepoRequest(
     // Create platform client
     const token = url.includes('github.com') ? env.GITHUB_TOKEN : env.GITLAB_TOKEN
     const client = PlatformFactory.createFromUrl(url, token)
+
+    if (!client) {
+      throw new Error('Unsupported platform or invalid URL')
+    }
 
     // Fetch repo info
     const repoInfo = client.parseRepoUrl(url)

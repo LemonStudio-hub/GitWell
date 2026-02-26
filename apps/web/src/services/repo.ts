@@ -1,5 +1,5 @@
 import { PlatformFactory, RepoAnalyzer } from '@gitdash/api'
-import type { RepoData, Commit, Contributor, Issue, PullRequest, HealthMetrics, TrendData } from '@gitdash/api'
+import type { RepoData, HealthMetrics, TrendData } from '@gitdash/api'
 import { cache } from '@gitdash/utils'
 
 /**
@@ -33,6 +33,9 @@ export class RepoService {
 
     // 获取平台客户端
     const client = PlatformFactory.createFromUrl(url)
+    if (!client) {
+      throw new Error('Unsupported platform or invalid URL')
+    }
 
     // 解析仓库信息
     const repoInfo = client.parseRepoUrl(url)

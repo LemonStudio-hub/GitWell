@@ -3,13 +3,25 @@
  * 定时任务：更新缓存的数据
  */
 
+// Cloudflare Workers ScheduledEvent 接口
+interface ScheduledEvent {
+  scheduledTime: number
+  cron: string
+  waitUntil(promise: Promise<any>): void
+}
+
+// Cloudflare Workers ExecutionContext 接口
+interface ExecutionContext {
+  waitUntil(promise: Promise<any>): void
+}
+
 export interface Env {
   GITHUB_TOKEN?: string
   GITLAB_TOKEN?: string
 }
 
 export default {
-  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(_event: ScheduledEvent, _env: Env, _ctx: ExecutionContext): Promise<void> {
     console.log('Cron job started at:', new Date().toISOString())
 
     try {

@@ -111,6 +111,6 @@ function getHealthAssessment(score: number): string {
 /**
  * 导出数据为 PDF 文件（需要打印功能）
  */
-export function exportAsPDF(filename: string): void {
+export function exportAsPDF(_filename: string): void {
   window.print()
 }

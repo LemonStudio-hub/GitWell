@@ -65,7 +65,7 @@ export class RepoAnalyzer {
    * 计算 Issue 解决率
    */
   calculateIssueResolutionRate(issues: Issue[]): number {
-    if (issues.length === 0) return 0
+    if (issues.length === 0) return 1
 
     const closedIssues = issues.filter((issue) => issue.state === 'closed')
     return closedIssues.length / issues.length
@@ -75,7 +75,7 @@ export class RepoAnalyzer {
    * 计算 PR 合并率
    */
   calculatePRMergeRate(prs: PullRequest[]): number {
-    if (prs.length === 0) return 0
+    if (prs.length === 0) return 1
 
     const mergedPRs = prs.filter((pr) => pr.state === 'merged')
     return mergedPRs.length / prs.length

@@ -11,6 +11,13 @@ export abstract class PlatformClient {
   }
 
   /**
+   * 获取平台类型
+   */
+  getPlatform(): 'github' | 'gitlab' {
+    return this.platform
+  }
+
+  /**
    * 解析仓库 URL
    */
   abstract parseRepoUrl(url: string): RepoInfo | null

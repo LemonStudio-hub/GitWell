@@ -1,6 +1,5 @@
 import { GitHubClient } from '../clients/github'
 import { GitLabClient } from '../clients/gitlab'
-import type { RepoInfo } from '../types'
 
 /**
  * 平台客户端工厂
@@ -23,7 +22,7 @@ export class PlatformFactory {
   /**
    * 自动检测平台并创建客户端
    */
-  static createFromUrl(url: string, token?: string) {
+  static createFromUrl(url: string, token?: string): GitHubClient | GitLabClient | null {
     const githubClient = new GitHubClient(token)
     const gitlabClient = new GitLabClient(token)
 
@@ -37,6 +36,6 @@ export class PlatformFactory {
       return gitlabClient
     }
 
-    throw new Error('Unsupported repository URL')
+    return null
   }
 }

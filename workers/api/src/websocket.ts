@@ -1,4 +1,4 @@
-import type { Env } from './types'
+import type { Env, WebSocket } from './types'
 import { checkAndTriggerAlerts } from './routes/alerts'
 
 // WebSocket 连接存储
@@ -9,11 +9,17 @@ export const websocketClients = new Map<string, WebSocket[]>()
  */
 export async function handleWebSocketUpgrade(
   request: Request,
-  env: Env,
   corsHeaders: HeadersInit
 ): Promise<Response> {
-  const pair = new WebSocketPair()
-  const [client, server] = Object.values(pair)
+  const pair: any = new (globalThis as any).WebSocketPair()
+  const [client, server] = [pair[0] as WebSocket, pair[1] as WebSocket]
+
+  if (!client || !server) {
+    return new Response(
+      JSON.stringify({ error: 'Failed to create WebSocket pair' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
 
   const url = new URL(request.url)
   const repoUrl = url.searchParams.get('repo')
@@ -42,7 +48,7 @@ export async function handleWebSocketUpgrade(
   }))
 
   // 监听消息
-  server.addEventListener('message', async (event) => {
+  server.addEventListener('message', async (event: MessageEvent) => {
     try {
       const data = JSON.parse(event.data as string)
 
@@ -88,7 +94,7 @@ export async function handleWebSocketUpgrade(
     status: 101,
     webSocket: client,
     headers: corsHeaders,
-  })
+  } as any)
 }
 
 /**
@@ -141,6 +147,10 @@ export async function startPeriodicUpdates(env: Env, repoUrl: string): Promise<v
     // 获取平台客户端
     const token = repoUrl.includes('github.com') ? env.GITHUB_TOKEN : env.GITLAB_TOKEN
     const client = PlatformFactory.createFromUrl(repoUrl, token)
+
+    if (!client) {
+      return
+    }
 
     // 获取仓库信息
     const repoInfo = client.parseRepoUrl(repoUrl)

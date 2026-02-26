@@ -224,8 +224,9 @@ export class AdvancedAnalyzer {
     weaknesses: string[]
     recommendations: string[]
   } {
-    const { healthScore, metrics, commits, issues, prs } = data
+    const { healthScore, metrics } = data
 
+     
     let overall = 'unknown'
     if (healthScore >= 80) {
       overall = 'excellent'

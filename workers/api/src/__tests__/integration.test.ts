@@ -42,8 +42,7 @@ describe('Cloudflare Workers Integration', () => {
     it('无效的 URL 应该返回 null', () => {
       const url = 'https://example.com/repo'
       const client = PlatformFactory.createFromUrl(url)
-      const repoInfo = client.parseRepoUrl(url)
-      expect(repoInfo).toBeNull()
+      expect(client).toBeNull()
     })
   })
 })

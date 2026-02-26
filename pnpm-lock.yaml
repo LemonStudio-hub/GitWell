@@ -8,6 +8,12 @@ importers:
 
   .:
     devDependencies:
+      '@eslint/compat':
+        specifier: ^2.0.2
+        version: 2.0.2(eslint@10.0.2(jiti@1.21.7))
+      '@eslint/js':
+        specifier: ^10.0.1
+        version: 10.0.1(eslint@10.0.2(jiti@1.21.7))
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.56.0
         version: 8.56.1(@typescript-eslint/parser@8.56.1(eslint@10.0.2(jiti@1.21.7))(typescript@5.9.3))(eslint@10.0.2(jiti@1.21.7))(typescript@5.9.3)
@@ -32,13 +38,13 @@ importers:
 
   apps/web:
     dependencies:
-      '@gitwell/api':
+      '@gitdash/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@gitwell/ui':
+      '@gitdash/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@gitwell/utils':
+      '@gitdash/utils':
         specifier: workspace:*
         version: link:../../packages/utils
       '@vueuse/core':
@@ -105,7 +111,7 @@ importers:
 
   packages/ui:
     dependencies:
-      '@gitwell/utils':
+      '@gitdash/utils':
         specifier: workspace:*
         version: link:../utils
       vue:
@@ -142,7 +148,7 @@ importers:
 
   workers/api:
     dependencies:
-      '@gitwell/api':
+      '@gitdash/api':
         specifier: workspace:*
         version: link:../../packages/api
     devDependencies:
@@ -164,7 +170,7 @@ importers:
 
   workers/cron:
     dependencies:
-      '@gitwell/api':
+      '@gitdash/api':
         specifier: workspace:*
         version: link:../../packages/api
     devDependencies:
@@ -734,6 +740,15 @@ packages:
     resolution: {integrity: sha512-EriSTlt5OC9/7SXkRSCAhfSxxoSUgBm33OH+IkwbdpgoqsSsUg7y3uh+IICI/Qg4BBWr3U2i39RpmycbxMq4ew==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
 
+  '@eslint/compat@2.0.2':
+    resolution: {integrity: sha512-pR1DoD0h3HfF675QZx0xsyrsU8q70Z/plx7880NOhS02NuWLgBCOMDL787nUeQ7EWLkxv3bPQJaarjcPQb2Dwg==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+    peerDependencies:
+      eslint: ^8.40 || 9 || 10
+    peerDependenciesMeta:
+      eslint:
+        optional: true
+
   '@eslint/config-array@0.23.2':
     resolution: {integrity: sha512-YF+fE6LV4v5MGWRGj7G404/OZzGNepVF8fxk7jqmqo3lrza7a0uUcDnROGRBG1WFC1omYUS/Wp1f42i0M+3Q3A==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
@@ -745,6 +760,15 @@ packages:
   '@eslint/core@1.1.0':
     resolution: {integrity: sha512-/nr9K9wkr3P1EzFTdFdMoLuo1PmIxjmwvPozwoSodjNBdefGujXQUF93u1DDZpEaTuDvMsIQddsd35BwtrW9Xw==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+
+  '@eslint/js@10.0.1':
+    resolution: {integrity: sha512-zeR9k5pd4gxjZ0abRoIaxdc7I3nDktoXZk2qOv9gCNWx3mVwEn32VRhyLaRsDiJjTs0xq/T8mfPtyuXu7GWBcA==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+    peerDependencies:
+      eslint: ^10.0.0
+    peerDependenciesMeta:
+      eslint:
+        optional: true
 
   '@eslint/object-schema@3.0.2':
     resolution: {integrity: sha512-HOy56KJt48Bx8KmJ+XGQNSUMT/6dZee/M54XyUyuvTvPXJmsERRvBchsUVx1UMe1WwIH49XLAczNC7V2INsuUw==}
@@ -2700,6 +2724,12 @@ snapshots:
 
   '@eslint-community/regexpp@4.12.2': {}
 
+  '@eslint/compat@2.0.2(eslint@10.0.2(jiti@1.21.7))':
+    dependencies:
+      '@eslint/core': 1.1.0
+    optionalDependencies:
+      eslint: 10.0.2(jiti@1.21.7)
+
   '@eslint/config-array@0.23.2':
     dependencies:
       '@eslint/object-schema': 3.0.2
@@ -2715,6 +2745,10 @@ snapshots:
   '@eslint/core@1.1.0':
     dependencies:
       '@types/json-schema': 7.0.15
+
+  '@eslint/js@10.0.1(eslint@10.0.2(jiti@1.21.7))':
+    optionalDependencies:
+      eslint: 10.0.2(jiti@1.21.7)
 
   '@eslint/object-schema@3.0.2': {}
 

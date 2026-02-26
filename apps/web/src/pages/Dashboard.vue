@@ -306,15 +306,15 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { repoService } from '../services/repo'
-import { formatNumber, formatPercentage, formatDate } from '@gitwell/utils'
-import { exportAsJSON, exportAsMarkdown } from '@gitwell/utils'
-import { MetricCard, HealthBadge } from '@gitwell/ui'
+import { formatNumber, formatPercentage, formatDate } from '@gitdash/utils'
+import { exportAsJSON, exportAsMarkdown } from '@gitdash/utils'
+import { MetricCard, HealthBadge } from '@gitdash/ui'
 import LineChart from '../components/LineChart.vue'
 import PieChart from '../components/PieChart.vue'
 import ContributorChart from '../components/ContributorChart.vue'
 import IssuePRChart from '../components/IssuePRChart.vue'
 import LanguageChart from '../components/LanguageChart.vue'
-import type { RepoData, HealthMetrics, TrendData, Contributor, Issue, PullRequest } from '@gitwell/api'
+import type { RepoData, HealthMetrics, TrendData, Contributor, Issue, PullRequest } from '@gitdash/api'
 
 const route = useRoute()
 

@@ -2,7 +2,9 @@
  * 格式化数字
  */
 export function formatNumber(num: number): string {
-  if (num >= 1000000) {
+  if (num >= 1000000000) {
+    return `${(num / 1000000000).toFixed(1)}B`
+  } else if (num >= 1000000) {
     return `${(num / 1000000).toFixed(1)}M`
   } else if (num >= 1000) {
     return `${(num / 1000).toFixed(1)}K`
@@ -13,8 +15,20 @@ export function formatNumber(num: number): string {
 /**
  * 格式化百分比
  */
-export function formatPercentage(value: number, decimals: number = 1): string {
-  return `${(value * 100).toFixed(decimals)}%`
+export function formatPercentage(value: number, decimals?: number): string {
+  const percentage = value * 100
+  
+  // 如果没有指定小数位数，自动决定
+  if (decimals === undefined) {
+    // 如果是整数，不显示小数
+    if (Number.isInteger(percentage)) {
+      return `${percentage}%`
+    }
+    // 否则显示2位小数
+    return `${percentage.toFixed(2)}%`
+  }
+  
+  return `${percentage.toFixed(decimals)}%`
 }
 
 /**
