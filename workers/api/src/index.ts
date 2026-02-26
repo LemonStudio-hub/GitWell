@@ -1,10 +1,28 @@
 import { PlatformFactory, RepoAnalyzer } from '@gitwell/api'
+import { handleWebSocketUpgrade } from './websocket'
+import {
+  handleSubscribeRequest,
+  handleUnsubscribeRequest,
+  handleGetSubscriptionsRequest,
+} from './routes/subscriptions'
+import {
+  handleCreateAlertRule,
+  handleGetAlertRules,
+  handleDeleteAlertRule,
+} from './routes/alerts'
+import {
+  handleCreateDashboard,
+  handleGetDashboards,
+  handleUpdateDashboard,
+  handleDeleteDashboard,
+} from './routes/dashboard'
 import type { Env } from './types'
 
 export interface Env {
   GITHUB_TOKEN?: string
   GITLAB_TOKEN?: string
   KV?: KVNamespace
+  D1?: D1Database
 }
 
 export default {
@@ -25,6 +43,11 @@ export default {
     }
 
     try {
+      // WebSocket 升级请求
+      if (path === '/api/ws' && request.headers.get('Upgrade') === 'websocket') {
+        return handleWebSocketUpgrade(request, env, corsHeaders)
+      }
+
       // API routes
       if (path === '/api/repo' && request.method === 'POST') {
         return handleRepoRequest(request, env, corsHeaders)
@@ -34,6 +57,49 @@ export default {
         return handleValidateRequest(request, corsHeaders)
       }
 
+      // Subscription routes
+      if (path === '/api/subscribe' && request.method === 'POST') {
+        return handleSubscribeRequest(request, env, corsHeaders)
+      }
+
+      if (path === '/api/unsubscribe' && request.method === 'POST') {
+        return handleUnsubscribeRequest(request, env, corsHeaders)
+      }
+
+      if (path === '/api/subscriptions' && request.method === 'GET') {
+        return handleGetSubscriptionsRequest(env, corsHeaders)
+      }
+
+      // Alert routes
+      if (path === '/api/alerts' && request.method === 'POST') {
+        return handleCreateAlertRule(request, env, corsHeaders)
+      }
+
+      if (path === '/api/alerts' && request.method === 'GET') {
+        return handleGetAlertRules(request, env, corsHeaders)
+      }
+
+      if (path.startsWith('/api/alerts/') && request.method === 'DELETE') {
+        return handleDeleteAlertRule(request, env, corsHeaders)
+      }
+
+      // Dashboard routes
+      if (path === '/api/dashboards' && request.method === 'POST') {
+        return handleCreateDashboard(request, env, corsHeaders)
+      }
+
+      if (path === '/api/dashboards' && request.method === 'GET') {
+        return handleGetDashboards(env, corsHeaders)
+      }
+
+      if (path.startsWith('/api/dashboards/') && request.method === 'PUT') {
+        return handleUpdateDashboard(request, env, corsHeaders)
+      }
+
+      if (path.startsWith('/api/dashboards/') && request.method === 'DELETE') {
+        return handleDeleteDashboard(request, env, corsHeaders)
+      }
+
       // 404
       return new Response('Not Found', { status: 404, headers: corsHeaders })
     } catch (error) {
@@ -41,6 +107,26 @@ export default {
         JSON.stringify({ error: error instanceof Error ? error.message : 'Internal Server Error' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
+    }
+  },
+
+  // 处理定时任务（Cron Triggers）
+  async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
+    const { startPeriodicUpdates } = await import('./websocket')
+
+    // 从数据库获取需要定期更新的仓库列表
+    if (env.D1) {
+      try {
+        const result = await env.D1.prepare(
+          'SELECT repo_url FROM subscriptions WHERE active = 1'
+        ).all()
+
+        for (const row of result.results as any[]) {
+          await startPeriodicUpdates(env, row.repo_url)
+        }
+      } catch (error) {
+        console.error('Failed to process scheduled updates:', error)
+      }
     }
   },
 }
