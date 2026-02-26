@@ -271,16 +271,13 @@
         <!-- Language Chart -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="repoData?.language">
           <h3 class="text-lg font-semibold mb-4">代码语言分布</h3>
-          <div class="h-64 flex items-center justify-center">
-            <div class="flex items-center gap-8">
-              <div class="text-6xl font-bold text-primary-600">
-                {{ repoData.language }}
-              </div>
-              <div class="text-gray-600">
-                <p>主要开发语言</p>
-                <p class="text-sm mt-2">语言分析功能即将推出</p>
-              </div>
-            </div>
+          <div class="h-64">
+            <LanguageChart
+              :data="[
+                { name: repoData.language, value: 100, color: '#0ea5e9' }
+              ]"
+              title="代码语言分布"
+            />
           </div>
         </div>
       </div>
