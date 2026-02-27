@@ -44,10 +44,17 @@ const updateChart = () => {
     return
   }
 
-  // 取前 10 个贡献者
-  const topContributors = props.data.slice(0, 10)
-  const names = topContributors.map((c) => c.login)
-  const contributions = topContributors.map((c) => c.contributions)
+  // 取前 10 个贡献者并按贡献数排序
+  const sortedContributors = [...props.data]
+    .sort((a, b) => {
+      const contributionsA = Number(a.contributions) || 0
+      const contributionsB = Number(b.contributions) || 0
+      return contributionsB - contributionsA
+    })
+    .slice(0, 10)
+
+  const names = sortedContributors.map((c) => c.login || '未知')
+  const contributions = sortedContributors.map((c) => Number(c.contributions) || 0)
 
   const option: EChartsCoreOption = {
     title: {

@@ -44,11 +44,36 @@ const updateChart = () => {
     return
   }
 
+  // 更健壮的日期处理
   const dates = props.data.map((item) => {
-    const date = new Date(item.date)
-    return `${date.getMonth() + 1}/${date.getDate()}`
+    try {
+      let date: Date
+      if (item.date instanceof Date) {
+        date = item.date
+      } else if (typeof item.date === 'string') {
+        date = new Date(item.date)
+      } else if (typeof item.date === 'number') {
+        date = new Date(item.date)
+      } else {
+        date = new Date()
+      }
+
+      // 验证日期是否有效
+      if (isNaN(date.getTime())) {
+        return '未知'
+      }
+
+      return `${date.getMonth() + 1}/${date.getDate()}`
+    } catch (error) {
+      console.error('Error processing date:', item.date, error)
+      return '未知'
+    }
   })
-  const values = props.data.map((item) => item.value)
+
+  const values = props.data.map((item) => {
+    const value = Number(item.value)
+    return isNaN(value) ? 0 : value
+  })
 
   const option: EChartsCoreOption = {
     title: {

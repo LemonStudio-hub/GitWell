@@ -40,6 +40,7 @@ const initChart = () => {
 const updateChart = () => {
   if (!chart) return
 
+  // 更健壮的数据统计
   const issueOpen = props.issues.filter((i) => i.state === 'open').length
   const issueClosed = props.issues.filter((i) => i.state === 'closed').length
 

@@ -43,6 +43,21 @@ const updateChart = () => {
     return
   }
 
+  // 过滤和验证数据
+  const validData = props.data
+    .filter((item) => item.name && !isNaN(Number(item.value)))
+    .map((item) => ({
+      name: String(item.name),
+      value: Number(item.value) || 0,
+    }))
+
+  if (validData.length === 0) {
+    if (chart) {
+      chart.clear()
+    }
+    return
+  }
+
   const option: EChartsCoreOption = {
     title: {
       text: props.title,
@@ -89,7 +104,7 @@ const updateChart = () => {
         labelLine: {
           show: false,
         },
-        data: props.data,
+        data: validData,
       },
     ],
   }

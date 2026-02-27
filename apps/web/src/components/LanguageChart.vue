@@ -43,9 +43,23 @@ const updateChart = () => {
     return
   }
 
-  const names = props.data.map((item) => item.name)
-  const values = props.data.map((item) => item.value)
-  const colors = props.data.map((item) => item.color || '#0ea5e9')
+  // 过滤和验证数据
+  const validData = props.data
+    .filter((item) => item.name && !isNaN(Number(item.value)))
+    .map((item) => ({
+      name: String(item.name),
+      value: Number(item.value) || 0,
+      color: item.color,
+    }))
+
+  if (validData.length === 0) {
+    if (chart) {
+      chart.clear()
+    }
+    return
+  }
+
+  const colors = validData.map((item) => item.color || '#0ea5e9')
 
   const option: EChartsCoreOption = {
     title: {
@@ -93,7 +107,7 @@ const updateChart = () => {
         labelLine: {
           show: false,
         },
-        data: props.data.map((item, index) => ({
+        data: validData.map((item, index) => ({
           value: item.value,
           name: item.name,
           itemStyle: {
